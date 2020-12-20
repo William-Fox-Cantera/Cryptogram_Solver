@@ -1,11 +1,10 @@
 """
 string_to_nums, gives each unique letter in the given sentence a unique integer
-                for example: 'hello' becomes 01223. Spaces are seperated by x's
-                then this function returns a list of each word in string form
-                Ex: hello world --> ['01223', '43526']
+                for example: 'hello' becomes 01223. Returns it in string form 
+                spaces are the letter 'x'
 
 Consumes: sentence, a string to be converted
-Produces: A list with each element being a word which has been converted to a number
+Produces: A string 
 """
 def string_to_nums(sentence):
     chars_used = {}
@@ -22,9 +21,8 @@ def string_to_nums(sentence):
     return ''.join(map(str, output_arr))
       
 """
-proces_solution, gives the output of the program if a solution is found. Also
-                 turns the global "finished" variable to true so the backtrack
-                 function stops once a solution is found.
+proces_solution, gives the output of the program if a solution is found. Also 
+                 adds the solution to the current solutions list. 
 
 Consumes: sentence, the solution
 Produces: nothing
@@ -52,9 +50,10 @@ def is_solution(sentence, encoded_sentence):
 construct_candidates, takes in the word list and the hidden word and returns a
                       list of words valid for the next word in the sentence. 
                       
-Consumes: words, the full list of words
-          hidden_word, the endcoded word
-Produces: A list of words that could be then encoded word/sentence
+Consumes: word_list, the words from the dictionary
+          sentence,  the current state of the solution
+          encoded_sentence, the cryptogram
+Produces: A list of words that could be in the encoded word/sentence
 """
 def construct_candidates(word_list, sentence, encoded_sentence):
     candidates = []
@@ -70,17 +69,14 @@ def construct_candidates(word_list, sentence, encoded_sentence):
        
         current_length = len(sentence.split(" ")) - offset
         
-        # Make sure the correct index of the word is retrieved. 
-        # Before this it was possible the wrong index was returned because the words number pattern matched to early.
+        # Makes sure the correct index of the word in a sentence is returned if mroe than one word has the same integer pattern
         pattern_inds = [ i for i, n in enumerate(encoded_nums_seperate) if n == string_to_nums(word) ]
         
         # Makes sure word is a candidate for the next word in the sentence    
         if current_length in pattern_inds:
            # Makes sure out of the possible matches for the next word, the entire partial solution is a valid one
-
             if string_to_nums(sentence + add_space + word) in string_to_nums(encoded):
                 candidates.append(word)
-                
     return candidates
 
 
@@ -91,7 +87,7 @@ backtrack, the main function of this program, checks if the current candidates
            
 Consumes: word_list, dictionary of English words
           sentence, the solution being built
-          encoded_sentence
+          encoded_sentence, the cryptogram
 Produces: nothing
 """
 def backtrack(word_list, sentence, encoded_sentence):
@@ -99,13 +95,11 @@ def backtrack(word_list, sentence, encoded_sentence):
         process_solution(sentence)
     else:                       
         candidate_list = construct_candidates(word_list, sentence, encoded_sentence) 
-        #print(candidate_list)
         for word in candidate_list: 
             if sentence is "": # Case 1: Nothing in sentence yet, pick first word from candidates
                 sentence += word
             else: # Case 2: sentence already has words in it 
                 sentence += " " + word
-            #print(sentence)
             backtrack(word_list, sentence, encoded_sentence)
             if " " in sentence:
                 sentence = sentence.rsplit(" ", 1)[0] 
@@ -130,5 +124,4 @@ if __name__ == '__main__':
     current_solutions = []
     
     backtrack(word_list, "", encoded)
-   
    
