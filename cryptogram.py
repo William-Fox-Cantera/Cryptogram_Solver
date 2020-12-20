@@ -70,9 +70,8 @@ def construct_candidates(word_list, sentence, encoded_sentence):
        
         current_length = len(sentence.split(" ")) - offset
         
-        # I am aware this line is slowing down the code a TON, but I am so frusterated at
-        # trying to find the index of the word in the list when the number pattern
-        # of the word is the same for different words.
+        # Make sure the correct index of the word is retrieved. 
+        # Before this it was possible the wrong index was returned because the words number pattern matched to early.
         pattern_inds = [ i for i, n in enumerate(encoded_nums_seperate) if n == string_to_nums(word) ]
         
         # Makes sure word is a candidate for the next word in the sentence    
